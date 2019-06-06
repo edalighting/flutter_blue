@@ -594,11 +594,11 @@ public class FlutterBluePlugin implements MethodCallHandler, RequestPermissionsR
         Protos.ScanSettings settings;
         try {
             settings = Protos.ScanSettings.newBuilder().mergeFrom(data).build();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                startScan21(settings);
-            } else {
+           // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+           //     startScan21(settings);
+           // } else {
                 startScan18(settings);
-            }
+           // }
             result.success(null);
         } catch (Exception e) {
             result.error("startScan", e.getMessage(), e);
@@ -606,11 +606,11 @@ public class FlutterBluePlugin implements MethodCallHandler, RequestPermissionsR
     }
 
     private void stopScan() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            stopScan21();
-        } else {
+       // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        //    stopScan21();
+       // } else {
             stopScan18();
-        }
+       // }
     }
 
     private ScanCallback scanCallback21;
@@ -690,7 +690,8 @@ public class FlutterBluePlugin implements MethodCallHandler, RequestPermissionsR
         for(int i = 0; i < serviceUuids.size(); i++) {
             uuids[i] = UUID.fromString(serviceUuids.get(i));
         }
-        boolean success = mBluetoothAdapter.startLeScan(uuids, getScanCallback18());
+        //boolean success = mBluetoothAdapter.startLeScan(uuids, getScanCallback18());
+        boolean success = mBluetoothAdapter.startLeScan(getScanCallback18());
         if(!success) throw new IllegalStateException("getBluetoothLeScanner() is null. Is the Adapter on?");
     }
 
