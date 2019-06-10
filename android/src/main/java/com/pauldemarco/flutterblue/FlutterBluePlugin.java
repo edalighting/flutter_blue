@@ -809,10 +809,17 @@ public class FlutterBluePlugin implements MethodCallHandler, RequestPermissionsR
             request.setRemoteId(gatt.getDevice().getAddress());
             request.setCharacteristicUuid(characteristic.getUuid().toString());
             request.setServiceUuid(characteristic.getService().getUuid().toString());
-            Protos.WriteCharacteristicResponse.Builder p = Protos.WriteCharacteristicResponse.newBuilder();
+            final Protos.WriteCharacteristicResponse.Builder p = Protos.WriteCharacteristicResponse.newBuilder();
             p.setRequest(request);
             p.setSuccess(status == BluetoothGatt.GATT_SUCCESS);
-            channel.invokeMethod("WriteCharacteristicResponse", p.build().toByteArray());
+           // channel.invokeMethod("WriteCharacteristicResponse", p.build().toByteArray());
+            final Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    channel.invokeMethod("WriteCharacteristicResponse", p.build().toByteArray());
+                }
+            });
         }
 
         @Override
@@ -863,17 +870,31 @@ public class FlutterBluePlugin implements MethodCallHandler, RequestPermissionsR
             request.setDescriptorUuid(descriptor.getUuid().toString());
             request.setCharacteristicUuid(descriptor.getCharacteristic().getUuid().toString());
             request.setServiceUuid(descriptor.getCharacteristic().getService().getUuid().toString());
-            Protos.WriteDescriptorResponse.Builder p = Protos.WriteDescriptorResponse.newBuilder();
+            final Protos.WriteDescriptorResponse.Builder p = Protos.WriteDescriptorResponse.newBuilder();
             p.setRequest(request);
             p.setSuccess(status == BluetoothGatt.GATT_SUCCESS);
-            channel.invokeMethod("WriteDescriptorResponse", p.build().toByteArray());
-
+           // channel.invokeMethod("WriteDescriptorResponse", p.build().toByteArray());
+            
+           final Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    channel.invokeMethod("WriteDescriptorResponse", p.build().toByteArray());
+                }
+            });
             if(descriptor.getUuid().compareTo(CCCD_ID) == 0) {
                 // SetNotificationResponse
-                Protos.SetNotificationResponse.Builder q = Protos.SetNotificationResponse.newBuilder();
+                final Protos.SetNotificationResponse.Builder q = Protos.SetNotificationResponse.newBuilder();
                 q.setRemoteId(gatt.getDevice().getAddress());
                 q.setCharacteristic(ProtoMaker.from(descriptor.getCharacteristic(), gatt));
-                channel.invokeMethod("SetNotificationResponse", q.build().toByteArray());
+               // channel.invokeMethod("SetNotificationResponse", q.build().toByteArray());
+                final Handler handler2 = new Handler(Looper.getMainLooper());
+                handler2.post(new Runnable() {
+                @Override
+                public void run() {
+                    channel.invokeMethod("SetNotificationResponse",q.build().toByteArray());
+                }
+            });
             }
         }
 
