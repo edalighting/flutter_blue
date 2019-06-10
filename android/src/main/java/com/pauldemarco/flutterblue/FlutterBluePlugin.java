@@ -825,10 +825,17 @@ public class FlutterBluePlugin implements MethodCallHandler, RequestPermissionsR
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             log(LogLevel.DEBUG, "[onCharacteristicChanged] uuid: " + characteristic.getUuid().toString());
-            Protos.OnNotificationResponse.Builder p = Protos.OnNotificationResponse.newBuilder();
+            final Protos.OnNotificationResponse.Builder p = Protos.OnNotificationResponse.newBuilder();
             p.setRemoteId(gatt.getDevice().getAddress());
             p.setCharacteristic(ProtoMaker.from(characteristic, gatt));
-            channel.invokeMethod("OnValueChanged", p.build().toByteArray());
+            //channel.invokeMethod("OnValueChanged", p.build().toByteArray());
+            final Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    channel.invokeMethod("OnValueChanged",p.build().toByteArray());
+                }
+            });
         }
 
         @Override
